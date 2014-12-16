@@ -21,7 +21,9 @@ public class ReCalcCubeTexture : MonoBehaviour
         currentScale = transform.localScale;   
     }
 
-	void Update () {
+    //This update function is only here to provide an example.
+    //Remove it in your actual application.
+    void Update () {
 
         if ( Input.GetKeyDown ( KeyCode.P ) )
         {
@@ -39,7 +41,7 @@ public class ReCalcCubeTexture : MonoBehaviour
                 //Note: if calling from another script which is also attached to the Cube, use this instead...
                 //gameObject.GetComponent<ReCalcCubeTexture>().reCalcCubeTexture();
         }
-	}
+    }
 
     public void reCalcCubeTexture()
     {
