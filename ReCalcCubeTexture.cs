@@ -1,3 +1,8 @@
+//Attach this script to your Cube.
+//After you change the scale of the Cube, either
+//	Click the "Update Texture" button [if in edit mode], or...
+//	Call reCalcCubeTexture() [if in runtime]
+
 #if UNITY_EDITOR //prevents contents from compiling into the final build
     using UnityEditor;
 #endif
