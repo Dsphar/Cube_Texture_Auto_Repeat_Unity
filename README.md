@@ -8,7 +8,7 @@ How To
 
 Step 1 - Add the "ReCalcCubeTexture.cs" script to your project
 
-Step 2 - Attach it to any Cube GameObjects that you want it to effect
+Step 2 - Attach it to any Cube GameObjects that you want it to affect
 
 Step 3 - Anytime, after changing the scale of the object, call the reCalcCubeTexture() method
 
