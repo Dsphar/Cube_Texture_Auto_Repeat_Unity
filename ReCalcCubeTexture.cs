@@ -87,46 +87,46 @@ public class ReCalcCubeTexture : MonoBehaviour
             Vector2[] mesh_UVs = mesh.uv;
 
             //update UV map
-                //Front
-                mesh_UVs[ 2 ] = new Vector2( 0 , height );
-                mesh_UVs[ 3 ] = new Vector2( length , height );
-                mesh_UVs[ 0 ] = new Vector2( 0 , 0 );
-                mesh_UVs[ 1 ] = new Vector2( length , 0 );
+            //Front
+            mesh_UVs[2] = new Vector2(0, height);
+            mesh_UVs[3] = new Vector2(length, height);
+            mesh_UVs[0] = new Vector2(0, 0);
+            mesh_UVs[1] = new Vector2(length, 0);
 
 
-                //Back
-                mesh_UVs[ 6 ] = new Vector2( 0 , height );
-                mesh_UVs[ 7 ] = new Vector2( length , height );
-                mesh_UVs[ 10 ] = new Vector2( 0 , 0 );
-                mesh_UVs[ 11 ] = new Vector2( length , 0 );
+            //Back
+            mesh_UVs[7] = new Vector2(0, 0);
+            mesh_UVs[6] = new Vector2(length, 0);
+            mesh_UVs[11] = new Vector2(0, height);
+            mesh_UVs[10] = new Vector2(length, height);
 
 
-                //Left
-                mesh_UVs[ 19 ] = new Vector2( 0 , height );
-                mesh_UVs[ 17 ] = new Vector2( width , height );
-                mesh_UVs[ 16 ] = new Vector2( 0 , 0 );
-                mesh_UVs[ 18 ] = new Vector2( width , 0 );
+            //Left
+            mesh_UVs[19] = new Vector2(width, 0);
+            mesh_UVs[17] = new Vector2(0, height);
+            mesh_UVs[16] = new Vector2(0, 0);
+            mesh_UVs[18] = new Vector2(width, height);
 
 
-                //Right
-                mesh_UVs[ 23 ] = new Vector2( 0 , height );
-                mesh_UVs[ 21 ] = new Vector2( width , height );
-                mesh_UVs[ 20 ] = new Vector2( 0 , 0 );
-                mesh_UVs[ 22 ] = new Vector2( width , 0 );
+            //Right
+            mesh_UVs[23] = new Vector2(width, 0);
+            mesh_UVs[21] = new Vector2(0, height);
+            mesh_UVs[20] = new Vector2(0, 0);
+            mesh_UVs[22] = new Vector2(width, height);
 
 
-                //Top
-                mesh_UVs[ 4 ] = new Vector2( 0 , width );
-                mesh_UVs[ 5 ] = new Vector2( length , width );
-                mesh_UVs[ 8 ] = new Vector2( 0 , 0 );
-                mesh_UVs[ 9 ] = new Vector2( length , 0 );
+            //Top
+            mesh_UVs[4] = new Vector2(length, 0);
+            mesh_UVs[5] = new Vector2(0, 0);
+            mesh_UVs[8] = new Vector2(length, width);
+            mesh_UVs[9] = new Vector2(0, width);
 
 
-                //Bottom
-                mesh_UVs[ 15 ] = new Vector2( 0 , width );
-                mesh_UVs[ 13 ] = new Vector2( length , width );
-                mesh_UVs[ 12 ] = new Vector2( 0 , 0 );
-                mesh_UVs[ 14 ] = new Vector2( length , 0 );
+            //Bottom
+            mesh_UVs[13] = new Vector2(length, 0);
+            mesh_UVs[14] = new Vector2(0, 0);
+            mesh_UVs[12] = new Vector2(length, width);
+            mesh_UVs[15] = new Vector2(0, width);
 
             //apply new UV map
             mesh.uv = mesh_UVs;
