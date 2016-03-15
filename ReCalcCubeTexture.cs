@@ -1,158 +1,112 @@
-//Attach this script to your Cube.
-//After you change the scale of the Cube, either
-//	Click the "Update Texture" button [if in edit mode], or...
-//	Call reCalcCubeTexture() [if in runtime]
-
-#if UNITY_EDITOR //prevents contents from compiling into the final build
-    using UnityEditor;
-#endif
-
 using UnityEngine;
-using System.Collections;
 
-
-public class ReCalcCubeTexture : MonoBehaviour 
+[ExecuteInEditMode]
+public class ReCalcCubeTexture : MonoBehaviour
 {
+    private Vector3 _currentScale;
 
-    Vector3 currentScale = new Vector3();
-
-    void Start()
+    private void Start()
     {
-        currentScale = transform.localScale;   
+        Calculate();
     }
 
-    //This update function is only here to provide an example.
-    //Remove it in your actual application.
-    void Update () {
+    private void Update()
+    {
+        Calculate();
+    }
 
-        if ( Input.GetKeyDown ( KeyCode.P ) )
+    public void Calculate()
+    {
+        if (_currentScale == transform.localScale) return;
+        if (CheckForDefaultSize()) return;
+
+        _currentScale = transform.localScale;
+        var mesh = GetMesh();
+        mesh.uv = SetupUvMap(mesh.uv);
+        mesh.name = "Cube Instance";
+
+        if (GetComponent<Renderer>().sharedMaterial.mainTexture.wrapMode != TextureWrapMode.Repeat)
         {
-
-            int smallest = 1;
-            int largest = 5;
-
-            Vector3 randomScale = new Vector3( Random.Range( smallest , largest ) , Random.Range( smallest , largest ) , Random.Range( smallest , largest ) );
-           
-            //At runtime, if you need to change your cube's scale...
-            transform.localScale = randomScale;
-
-            //then immediately call reCalcCubeTexture() to update the texture. That's it!
-                reCalcCubeTexture(); 
-                //Note: if calling from another script which is also attached to the Cube, use this instead...
-                //gameObject.GetComponent<ReCalcCubeTexture>().reCalcCubeTexture();
+            GetComponent<Renderer>().sharedMaterial.mainTexture.wrapMode = TextureWrapMode.Repeat;
         }
     }
 
-    public void reCalcCubeTexture()
+    private Mesh GetMesh()
     {
+        Mesh mesh;
 
-        //if the scale has changed, do something...
-        if ( currentScale != transform.localScale )
-        {
+        #if UNITY_EDITOR
 
-            currentScale = transform.localScale;
+        var meshFilter = GetComponent<MeshFilter>();
+        var meshCopy = Instantiate(meshFilter.sharedMesh);
+        mesh = meshFilter.mesh = meshCopy;
 
-          //if scale is ( 1, 1, 1 ) there is no need for a custom MeshFilter (for tiling the texture), revert to the standard cube MeshFilter
-            if ( currentScale == Vector3.one )
-            {
-
-                GameObject cube = GameObject.CreatePrimitive( PrimitiveType.Cube );
-
-                DestroyImmediate( GetComponent<MeshFilter>() );
-                gameObject.AddComponent<MeshFilter>();
-                GetComponent<MeshFilter>().sharedMesh = cube.GetComponent<MeshFilter>().sharedMesh;
-
-                DestroyImmediate( cube );
-                return;
-
-            }
-
-
-          //if still here, update the UV map on the mesh so the texture will repeat at the correct scale
-
-            float length = currentScale.x;
-            float width = currentScale.z;
-            float height = currentScale.y;
-
-            Mesh mesh;
-
-            #if UNITY_EDITOR
-                MeshFilter meshFilter = GetComponent<MeshFilter>();
-                Mesh meshCopy = ( Mesh ) Mesh.Instantiate( meshFilter.sharedMesh );
-                mesh = meshFilter.mesh = meshCopy;
-            #else
-                mesh = GetComponent<MeshFilter>().mesh;
-            #endif
-
-            Vector2[] mesh_UVs = mesh.uv;
-
-            //update UV map
-                //Front
-                mesh_UVs[ 2 ] = new Vector2( 0 , height );
-                mesh_UVs[ 3 ] = new Vector2( length , height );
-                mesh_UVs[ 0 ] = new Vector2( 0 , 0 );
-                mesh_UVs[ 1 ] = new Vector2( length , 0 );
-
-
-                //Back
-                mesh_UVs[ 6 ] = new Vector2( 0 , height );
-                mesh_UVs[ 7 ] = new Vector2( length , height );
-                mesh_UVs[ 10 ] = new Vector2( 0 , 0 );
-                mesh_UVs[ 11 ] = new Vector2( length , 0 );
-
-
-                //Left
-                mesh_UVs[ 19 ] = new Vector2( 0 , height );
-                mesh_UVs[ 17 ] = new Vector2( width , height );
-                mesh_UVs[ 16 ] = new Vector2( 0 , 0 );
-                mesh_UVs[ 18 ] = new Vector2( width , 0 );
-
-
-                //Right
-                mesh_UVs[ 23 ] = new Vector2( 0 , height );
-                mesh_UVs[ 21 ] = new Vector2( width , height );
-                mesh_UVs[ 20 ] = new Vector2( 0 , 0 );
-                mesh_UVs[ 22 ] = new Vector2( width , 0 );
-
-
-                //Top
-                mesh_UVs[ 4 ] = new Vector2( 0 , width );
-                mesh_UVs[ 5 ] = new Vector2( length , width );
-                mesh_UVs[ 8 ] = new Vector2( 0 , 0 );
-                mesh_UVs[ 9 ] = new Vector2( length , 0 );
-
-
-                //Bottom
-                mesh_UVs[ 15 ] = new Vector2( 0 , width );
-                mesh_UVs[ 13 ] = new Vector2( length , width );
-                mesh_UVs[ 12 ] = new Vector2( 0 , 0 );
-                mesh_UVs[ 14 ] = new Vector2( length , 0 );
-
-            //apply new UV map
-            mesh.uv = mesh_UVs;
-            mesh.name = "Cube Instance";
-            if ( renderer.sharedMaterial.mainTexture.wrapMode != TextureWrapMode.Repeat )
-                renderer.sharedMaterial.mainTexture.wrapMode = TextureWrapMode.Repeat;
+        #else
         
-        }
+        mesh = GetComponent<MeshFilter>().mesh
+
+        #endif
+
+        return mesh;
+    }
+
+    private Vector2[] SetupUvMap(Vector2[] meshUVs)
+    {
+        var width = _currentScale.x;
+        var depth = _currentScale.z;
+        var height = _currentScale.y;
+
+        //Front
+        meshUVs[2] = new Vector2(0, height);
+        meshUVs[3] = new Vector2(width, height);
+        meshUVs[0] = new Vector2(0, 0);
+        meshUVs[1] = new Vector2(width, 0);
+
+        //Back
+        meshUVs[7] = new Vector2(0, 0);
+        meshUVs[6] = new Vector2(width, 0);
+        meshUVs[11] = new Vector2(0, height);
+        meshUVs[10] = new Vector2(width, height);
+
+        //Left
+        meshUVs[19] = new Vector2(depth, 0);
+        meshUVs[17] = new Vector2(0, height);
+        meshUVs[16] = new Vector2(0, 0);
+        meshUVs[18] = new Vector2(depth, height);
+
+        //Right
+        meshUVs[23] = new Vector2(depth, 0);
+        meshUVs[21] = new Vector2(0, height);
+        meshUVs[20] = new Vector2(0, 0);
+        meshUVs[22] = new Vector2(depth, height);
+
+        //Top
+        meshUVs[4] = new Vector2(width, 0);
+        meshUVs[5] = new Vector2(0, 0);
+        meshUVs[8] = new Vector2(width, depth);
+        meshUVs[9] = new Vector2(0, depth);
+
+        //Bottom
+        meshUVs[13] = new Vector2(width, 0);
+        meshUVs[14] = new Vector2(0, 0);
+        meshUVs[12] = new Vector2(width, depth);
+        meshUVs[15] = new Vector2(0, depth);
+
+        return meshUVs;
+    }
+
+    private bool CheckForDefaultSize()
+    {
+        if (_currentScale != Vector3.one) return false;
+
+        var cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+
+        DestroyImmediate(GetComponent<MeshFilter>());
+        gameObject.AddComponent<MeshFilter>();
+        GetComponent<MeshFilter>().sharedMesh = cube.GetComponent<MeshFilter>().sharedMesh;
+
+        DestroyImmediate(cube);
+
+        return true;
     }
 }
-
-
-//Create Button to allow the Update while in Editor
-#if UNITY_EDITOR
-    [CustomEditor( typeof( ReCalcCubeTexture ) )]
-    public class UpdateTextures : Editor
-    {
-        public override void OnInspectorGUI()
-        {
-            DrawDefaultInspector();
-
-            ReCalcCubeTexture myScript = ( ReCalcCubeTexture ) target;
-            if ( GUILayout.Button( "Update Texture" ) )
-            {
-                myScript.reCalcCubeTexture();
-            }
-        }
-    }
-#endif
