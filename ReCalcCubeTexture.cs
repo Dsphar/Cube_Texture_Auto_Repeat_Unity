@@ -43,7 +43,7 @@ public class ReCalcCubeTexture : MonoBehaviour
 
         #else
         
-        mesh = GetComponent<MeshFilter>().mesh
+        mesh = GetComponent<MeshFilter>().mesh;
 
         #endif
 
